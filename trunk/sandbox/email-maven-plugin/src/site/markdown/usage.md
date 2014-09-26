@@ -29,7 +29,7 @@
 
   Brief examples on how to use the Email Maven Plugin goals.
 
-## Send a simple message
+### Send a simple message
 
 In this example, you will need to have a account at gmail. Note by default, this plugin uses Google's mail server
 
@@ -43,7 +43,7 @@ Note:
   * Add '-Dcc=xxx' -Dbcc=xxx' add needed
 
 
-## Hide credentials
+### Hide credentials
 
 It is not desirable to expose username and password on command line, please follow [Maven password encryption](http://maven.apache.org/guides/mini/guide-encryption.html)
 to store your credentials at your Maven's local settings.xml ( ~/.m2/settings.xml)
@@ -73,25 +73,25 @@ Here is a typical example of your settings.xml's server block
 All following examples assume your have credential stored at your local setting.xml
 
 
-## Send a simple message with contents taken from an external file
+### Send a simple message with contents taken from an external file
 
 
     mvn email:send -Dto=xxx -Dfrom=xxx -Dsubject=xxx -DmessageFile=path.to.your.text.file
 
 
-## Send a simple message with attachments
+### Send a simple message with attachments
 
 
     mvn email:send -Dto=xxx -Dfrom=xxx -Dsubject=xxx -Dmessage=xxx -Dattachments=path.to.multiple.files.separeted.by.space.comma.or.semicolon
 
 
-## Send a html content
+### Send a html content
 
 
     mvn email:send -Dto=xxx -Dfrom=xxx -Dsubject=xxx -DmessageFile=path.to.your.html.file -Dhtml=true
 
 
-## Send a html content to the mass users using bcc
+### Send a html content to the mass users using bcc
 
 
     mvn email:send -Dto=xxx -Dfrom=xxx -Dsubject=xxx -DmessageFile=path.to.your.html.file -Dhtml=true -DbccFile=path.to.file.content.user.email.list
