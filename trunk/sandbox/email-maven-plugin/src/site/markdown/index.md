@@ -31,4 +31,10 @@
 ## Goals Overview
 
 
-  * [email:send](./add-source-mojo.html) Send email
+  * [email:send](./send-mojo.html) Send email
+
+
+## Usage
+
+  Instructions on how to use the Email Maven Plugin can be found on the {{{./usage.html}usage page}}.
+
