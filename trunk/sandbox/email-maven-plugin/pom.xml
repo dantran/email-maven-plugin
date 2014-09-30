@@ -6,7 +6,7 @@
   <parent>
     <artifactId>mojo-sandbox-parent</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>14</version>
+    <version>15</version>
   </parent>
 
   <artifactId>email-maven-plugin</artifactId>
