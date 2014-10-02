@@ -26,7 +26,6 @@ package com.codehaus.mojo.email;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -169,6 +168,14 @@ public class SendMailMojo
     private File bccFile;
 
     /**
+     * Maximum number to bcc recipient per send
+     *
+     * @since 1.0 beta 1
+     */
+    @Parameter( property = "maxBccCountPerSend",  defaultValue="99" )
+    private int maxBccCountPerSend;
+
+    /**
      * Simple message to send out
      */
     @Parameter( property = "message", defaultValue = "" )
@@ -299,7 +306,7 @@ public class SendMailMojo
     private void configureToList( Email email )
         throws EmailException, IOException
     {
-        List<String> tokens = split( to, toFile );
+        List<String> tokens = SplitUtils.splits( to, toFile );
         for ( String token : tokens )
         {
             email.addTo( token );
@@ -309,7 +316,7 @@ public class SendMailMojo
     private void configureCcList( Email email )
         throws EmailException, IOException
     {
-        List<String> tokens = split( cc, ccFile );
+        List<String> tokens = SplitUtils.splits( cc, ccFile );
         for ( String token : tokens )
         {
             email.addCc( token );
@@ -319,7 +326,7 @@ public class SendMailMojo
     private void configureBccList( Email email )
         throws EmailException, IOException
     {
-        List<String> tokens = split( bcc, bccFile );
+        List<String> tokens = SplitUtils.splits( bcc, bccFile );
         for ( String token : tokens )
         {
             email.addBcc( token );
@@ -329,7 +336,7 @@ public class SendMailMojo
     private void configureAttachments( MultiPartEmail email )
         throws EmailException, IOException
     {
-        List<String> tokens = split( this.attachments, null );
+        List<String> tokens = SplitUtils.splits( this.attachments, null );
         for ( String token : tokens )
         {
             EmailAttachment attachment = new EmailAttachment();
@@ -343,33 +350,6 @@ public class SendMailMojo
         }
     }
 
-    private List<String> split( final String strParam, final File fileParam )
-        throws IOException
-    {
-        ArrayList<String> list = new ArrayList<String>();
 
-        if ( !StringUtils.isBlank( strParam ) )
-        {
-            String[] tokens = StringUtils.split( strParam, " ,;" );
-            for ( String token : tokens )
-            {
-                list.add( token );
-            }
-        }
-
-        if ( fileParam != null )
-        {
-            String values = FileUtils.fileRead( fileParam );
-            String[] tokens = StringUtils.split( values, " ,;" );
-            tokens = StringUtils.split( values, " ,;" );
-            for ( String token : tokens )
-            {
-                list.add( token );
-            }
-        }
-
-        return list;
-
-    }
 
 }
