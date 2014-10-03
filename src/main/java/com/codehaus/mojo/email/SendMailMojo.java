@@ -26,6 +26,7 @@ package com.codehaus.mojo.email;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -172,7 +173,7 @@ public class SendMailMojo
      *
      * @since 1.0 beta 1
      */
-    @Parameter( property = "maxBccCountPerSend",  defaultValue="99" )
+    @Parameter( property = "maxBccCountPerSend", defaultValue = "99" )
     private int maxBccCountPerSend;
 
     /**
@@ -239,39 +240,68 @@ public class SendMailMojo
 
             Server server = getServerSettings( host + ":" + port );
 
-            MultiPartEmail email = new MultiPartEmail();
-            if ( html )
+            List<String> bccList = SplitUtils.splits( bcc, bccFile );
+
+            while ( true )
             {
-                email = new HtmlEmail();
+                List<String> bccTokens = new ArrayList<String>();
+                for ( int i = 0; i < this.maxBccCountPerSend; ++i )
+                {
+                    if ( bccList.size() != 0 )
+                    {
+                        bccTokens.add( bccList.get( 0 ) );
+                        bccList.remove( 0 );
+                    }
+                }
+
+                //very hacky here where we repeat the 'to', 'cc' list per bcc block
+                send( server, bccTokens );
+                if ( bccList.size() == 0 )
+                {
+                    break;
+                }
             }
 
-            email.setCharset( this.charset );
 
-            email.setHostName( this.host );
-            email.setSmtpPort( this.port );
-            email.setAuthenticator( new DefaultAuthenticator( server.getUsername(), server.getPassword() ) );
-            email.setSSLOnConnect( this.ssl );
-            email.setStartTLSEnabled( this.startTLS );
-
-            if ( !StringUtils.isBlank( this.from ) )
-            {
-                email.setFrom( this.from );
-            }
-
-            this.configureToList( email );
-            this.configureCcList( email );
-            this.configureBccList( email );
-            this.configureAttachments( email );
-
-            email.setSubject( this.subject );
-            email.setMsg( this.message );
-
-            email.send();
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Unable to send out email", e );
         }
+    }
+
+    private void send( Server server, List<String> bccList )
+        throws EmailException, IOException
+    {
+        MultiPartEmail email = new MultiPartEmail();
+        if ( html )
+        {
+            email = new HtmlEmail();
+        }
+
+        email.setCharset( this.charset );
+
+        email.setHostName( this.host );
+        email.setSmtpPort( this.port );
+        email.setAuthenticator( new DefaultAuthenticator( server.getUsername(), server.getPassword() ) );
+        email.setSSLOnConnect( this.ssl );
+        email.setStartTLSEnabled( this.startTLS );
+
+        if ( !StringUtils.isBlank( this.from ) )
+        {
+            email.setFrom( this.from );
+        }
+
+        this.configureToList( email, SplitUtils.splits( to, toFile ) );
+        this.configureCcList( email, SplitUtils.splits( cc, ccFile ) );
+        this.configureBccList( email, bccList );
+
+        this.configureAttachments( email );
+
+        email.setSubject( this.subject );
+        email.setMsg( this.message );
+
+        email.send();
     }
 
     private Server getServerSettings( String serverId )
@@ -303,30 +333,27 @@ public class SendMailMojo
         return server;
     }
 
-    private void configureToList( Email email )
+    private void configureToList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
-        List<String> tokens = SplitUtils.splits( to, toFile );
         for ( String token : tokens )
         {
             email.addTo( token );
         }
     }
 
-    private void configureCcList( Email email )
+    private void configureCcList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
-        List<String> tokens = SplitUtils.splits( cc, ccFile );
         for ( String token : tokens )
         {
             email.addCc( token );
         }
     }
 
-    private void configureBccList( Email email )
+    private void configureBccList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
-        List<String> tokens = SplitUtils.splits( bcc, bccFile );
         for ( String token : tokens )
         {
             email.addBcc( token );
@@ -349,7 +376,5 @@ public class SendMailMojo
             email.attach( attachment );
         }
     }
-
-
 
 }
