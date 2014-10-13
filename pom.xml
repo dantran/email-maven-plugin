@@ -16,7 +16,7 @@
 
   <description>Use this plugin to send email</description>
 
-  <inceptionYear>20014</inceptionYear>
+  <inceptionYear>2014</inceptionYear>
 
   <prerequisites>
     <maven>2.2.1</maven>
