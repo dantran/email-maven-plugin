@@ -3,7 +3,7 @@ package com.codehaus.mojo.email;
 /*
  * The MIT License
  *
- * Copyright (c) 2004, The Codehaus
+ * Copyright (c) 20014, The Codehaus
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -39,6 +39,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Server;
@@ -51,7 +52,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 /**
  * Provides functionality for sending email.
  */
-@Mojo( name = "send", requiresProject = false, threadSafe = true, aggregator = true )
+@Mojo( name = "send", requiresProject = false, threadSafe = true, aggregator = true, defaultPhase = LifecyclePhase.PACKAGE )
 public class SendMailMojo
     extends AbstractMojo
 {
