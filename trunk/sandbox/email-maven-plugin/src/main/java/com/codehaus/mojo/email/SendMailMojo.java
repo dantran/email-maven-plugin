@@ -221,6 +221,13 @@ public class SendMailMojo
     @Parameter( property = "html", defaultValue = "false" )
     private boolean html = false;
 
+
+    /**
+     * When enable, send to the sender only
+     */
+    @Parameter( property = "dryRun", defaultValue = "false" )
+    private boolean dryRun = false;
+
     /**
      * MNG-4384
      *
@@ -337,6 +344,12 @@ public class SendMailMojo
     private void configureToList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
+        if ( this.dryRun )
+        {
+            email.addTo(  this.from );
+            return;
+        }
+
         for ( String token : tokens )
         {
             email.addTo( token );
@@ -346,6 +359,11 @@ public class SendMailMojo
     private void configureCcList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
+        if ( this.dryRun )
+        {
+            return;
+        }
+
         for ( String token : tokens )
         {
             email.addCc( token );
@@ -355,6 +373,12 @@ public class SendMailMojo
     private void configureBccList( Email email, List<String> tokens )
         throws EmailException, IOException
     {
+
+        if ( this.dryRun )
+        {
+            return;
+        }
+
         for ( String token : tokens )
         {
             email.addBcc( token );
